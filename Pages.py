@@ -4,10 +4,13 @@ from tkinter import ttk, filedialog, messagebox
 class Page(tk.Frame):
     def __init__(self):
         tk.Frame.__init__(self)
+
     def show(self, event=None):
         self.lift()
+
     def setLang(self, lang):
         self.LANG = lang
+
     def setFiles(self, files):
         self.FILES = files
 
@@ -47,8 +50,7 @@ class Menu(Page):
 
         ###############################
         #   Document Button
-        self.docButton = tk.Button(self, text="Document", width=30, command=lambda: self.master.children["!application"].pages[1].lift() if not self.SELECTED == None and not self.selectedFiles == None
-                                                    else messagebox.showinfo("Error", "Please Select a Language and Files"))
+        self.docButton = tk.Button(self, text="Document", width=30, command=lambda: self.master.children["!application"].beginDocumenting())
         self.docButton.place(x=(w/2), y=((h/2) + (h/2.15)), anchor="center")
         ###############################
 
@@ -93,7 +95,7 @@ class DocumenterPage(Page):
 
         ##########################
         #   No Doc
-        self.noDocButton = tk.Button(self, text="Document", width=15, command=lambda: self.but_noDoc())
+        self.noDocButton = tk.Button(self, text="No Documentation", width=15, command=lambda: self.but_noDoc())
         self.noDocButton.place(x=(w / 2), y=((h / 2) + (h / 2.25)), anchor="center")
         ##########################
 
@@ -111,6 +113,7 @@ class DocumenterPage(Page):
 
     def but_noDoc(self):
         print("no documentation!")
+        print(self.FILES)
 
     def but_prevFunc(self):
         print("prev func")
