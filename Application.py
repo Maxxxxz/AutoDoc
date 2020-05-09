@@ -30,6 +30,9 @@ class Application(tk.Frame):
 
         self.pages[0].show()
 
+        self.SELECTED = None
+        self.selectedFiles = None
+
         self.bind_all("<Control-Key-0>", self.pages[0].show)    # main menu
         self.bind_all("<Control-Key-1>", self.pages[1].show)    # Page 2
 
@@ -39,7 +42,16 @@ class Application(tk.Frame):
 
     def setContent(self, lang, files):
         self.pages[1].setLang(lang)
+        self.SELECTED = lang
         self.pages[1].setFiles(files)
+        self.selectedFiles = files
+
+    def beginDocumenting(self):
+        # self.master.children["!application"].pages[1].lift()
+        if self.SELECTED is not None and self.selectedFiles is not None:
+            pass
+        else:
+            messagebox.showinfo("Error", "Please Select a Language and Files")
 
 
 if __name__ == "__main__":
