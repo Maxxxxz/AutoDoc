@@ -1,0 +1,19 @@
+{
+
+  "Python": ["class" ,"def"],
+  "C": ["class", "struct" ,"void", "static", "int", "double", "float", "bool", "dataType"],
+  "C++": ["class", "struct" ,"void", "static", "int", "double", "float", "bool", "dataType"],
+  "C#": ["class", "void", "static", "int", "double", "float", "bool", "dataType"],
+  "Go": ["class", "void", "static", "int", "double", "float", "bool", "dataType"],
+  "Java": ["class", "int", "double", "float", "boolean"],
+  "Javascript": ["function"],
+  "PHP": ["class" ,"function"],
+  "Kotlin": ["class", "void", "int", "double", "float", "boolean", "dataType"],
+  "Scala": ["object", "def"],
+  "Haskell": ["->"],
+  "Ruby": ["class", "def"],
+  "Lua": ["function"],
+  "Rust": ["fn", "trait", "impl", "struct"],
+  "Perl": ["sub"]
+
+}
