@@ -60,15 +60,21 @@ class Menu(Page):
         self.textbox.delete("1.0", tk.END)
         self.textbox.insert(tk.END, '\n'.join(self.selectedFiles))
         self.textbox.config(state=tk.DISABLED)
+        self.master.children["!application"].setContent(self.SELECTED, self.selectedFiles)
 
     def langSelectEvent(self, event, argu):
-        self.SELECTED = argu.get()
-        print(self.SELECTED)
+        self.LANG = argu.get()
+        self.master.children["!application"].setContent(argu.get(), self.selectedFiles)
 
 #   Documentor pages
 class DocumenterPage(Page):
     def __init__(self, w, h):
         Page.__init__(self)
+
+        ##########################
+        #   Show the current File
+
+        ##########################
 
         ##########################
         #   Show the current Function
