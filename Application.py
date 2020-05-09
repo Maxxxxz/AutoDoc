@@ -41,17 +41,18 @@ class Application(tk.Frame):
         self.pages.append(Pages.DocumenterPage(WIDTH, HEIGHT))
 
     def setContent(self, lang, files):
-        self.pages[1].setLang(lang)
         self.SELECTED = lang
-        self.pages[1].setFiles(files)
         self.selectedFiles = files
+        print(self.SELECTED)
+        print(self.selectedFiles)
+        # self.pages[1].setLang(lang)
+        # self.pages[1].setFiles(files)
 
     def beginDocumenting(self):
-        # self.master.children["!application"].pages[1].lift()
-        if self.SELECTED is not None and self.selectedFiles is not None:
-            pass
-        else:
+        if self.SELECTED is None or self.selectedFiles is None:
             messagebox.showinfo("Error", "Please Select a Language and Files")
+        else:
+            self.pages[1].show()
 
 
 if __name__ == "__main__":
