@@ -73,14 +73,18 @@ class DocumenterPage(Page):
 
         ##########################
         #   Show the current File
-
+        self.curFileBox = tk.Text(self)
+        self.curFileBox.config(width=50, height=1) # 1 line tall, 50 chars long
+        self.curFileBox.place(x=(w/2), y=((h/2) - (h/2.15)), anchor="center")
+        self.curFileBox.insert(tk.END, "file.ext")
+        self.curFileBox.config(state=tk.DISABLED)  # disable after inserting
         ##########################
 
         ##########################
         #   Show the current Function
         self.functionbox = tk.Text(self)
         self.functionbox.config(width=50, height=1) # 1 line tall, 50 chars long
-        self.functionbox.place(x=(w/2), y=((h/2) - (h/2.25)), anchor="center")
+        self.functionbox.place(x=(w/2), y=((h/2) - (h/2.35)), anchor="center")
         self.functionbox.insert(tk.END, "def function()")
         self.functionbox.config(state=tk.DISABLED)  # disable after inserting
         ##########################
