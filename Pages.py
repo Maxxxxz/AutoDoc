@@ -119,6 +119,15 @@ class DocumenterPage(Page):
         #label.place(x=(w/2), y=25, anchor="center")
 
     def but_nextFunc(self):
+        if True:    # if no more functions in file to document
+            t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
+            if t_choice:    # if yes to add documentation
+                pass    # send list OF lists of comments to documentor
+            else:   # else just grab
+
+        else:       # else just do logic to move onto next function
+
+
         print("next func")
 
     def but_noDoc(self):
