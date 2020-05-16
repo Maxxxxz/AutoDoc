@@ -79,7 +79,7 @@ class DocumenterPage(Page):
         ##########################
         #   Initialize Documentor
         # set this later
-        self.doc
+        self.doc = None
         ##########################
 
         ##########################
@@ -138,19 +138,20 @@ class DocumenterPage(Page):
     def postInit(self): # actually init documentor here
         self.doc = dc.Documenter(self.LANG, self.FILES)
 
+    # need to add keys to the self.comments so I can pass that to comment
     def but_nextFunc(self):
         somevar = 1
         if somevar:    # if no more functions in file to document
             t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
             if t_choice:    # if yes: add documentation
-                doc.
+                self.doc.comment(self.comments)
             else:   # else just do nothing, lets the user go back and change their info
                 pass
         else:       # else just do logic to move onto next function
             if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-                self.comments[self.curfunccounter] = self.commentbox.get()
+                self.comments[self.curfunccounter] = self.commentbox.get(0, tk.END)
             else:  # else: append current comment and increment counter
-                self.comments.append(self.commentbox.get())
+                self.comments.append((self.commentbox.get(0, tk.END)).split('\n'))
                 self.curfunccounter += 1
 
         # now show the next function
@@ -164,9 +165,9 @@ class DocumenterPage(Page):
 
     def but_prevFunc(self):
         if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-            self.comments[self.curfunccounter] = self.commentbox.get()
+            self.comments[self.curfunccounter] = self.commentbox.get(0, tk.END)
         else:  # else: append current comment and increment counter
-            self.comments.append(self.commentbox.get())
+            self.comments.append(self.commentbox.get(0, tk.END))
             self.curfunccounter -= 1
 
         # now show the previous function
