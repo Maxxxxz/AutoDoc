@@ -12,6 +12,7 @@ class Documenter():
 		self.FILES = files
 		self.CURFILE = files[0]
 		self.langFuncRegex = None
+		self.content = None
 
 	def findFuncDec(self, fileContent):
 		arrInds = []	#empty list
@@ -25,11 +26,20 @@ class Documenter():
 
 		return arrInds
 
-	# UPDATE TO TAKE LIST OF ALL COMMENTS WITH INDECES, dict of dicts? list of dicts?
-	def comment(self, fileContent, comment, index):	# comment will be array of lines to comment
-		comment.reverse()			# reverse comment to place comment in proper order
-		for line in comment:
-			fileContent.insert(index, line)
+	# update to use dict of lists of strings :)
+	def comment(self, commentsDict):	# comment will be array of lines to comment
+		keys = commentsDict.keys()		# logic to get keys in correct order we need them in
+		keys.sort()
+		keys.reverse()
+		# keys are now in reverse order to document from bottom down, keeping other keys simple with no extra math
+		for k in keys:		# begin looping over all keys (will be from bottom up)
+			commentsDict[k].reverse()
+			for c in commentsDict[k]:	# should work :)
+				self.content.insert(k, c)		# insert comments in reverse order so they appear correctly
+
+		# comment.reverse()			# reverse comment to place comment in proper order
+		# for line in comment:
+		# 	fileContent.insert(index, line)
 		return fileContent		# return new version of filecontent
 
 	def getRegex(self):
@@ -51,11 +61,11 @@ class Documenter():
 		return comments
 
 	def getFileContent(self) -> List[str]:
-		content = ""
+		self.content = None
 		with open(self.CURFILE) as f:
-			content = f.readlines()
-		content = [tmp.strip('\n') for tmp in content]
-		return content
+			self.content = f.readlines()
+		self.content = [tmp.strip('\n') for tmp in self.content]
+		return self.content
 
 	def getLines(self) -> dict:
 		fileContent = getFileContent()
