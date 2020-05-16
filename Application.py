@@ -60,3 +60,5 @@ if __name__ == "__main__":
     app = Application(root)
     app.pack()
     root.mainloop()
+else:
+    pass # CLI start code here!
