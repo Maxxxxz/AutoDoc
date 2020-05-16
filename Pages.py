@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
+import Documenter as dc
+
+# Add self.approot variable so all child pages have direct access to the app root
 class Page(tk.Frame):
     def __init__(self):
         tk.Frame.__init__(self)
@@ -42,6 +45,7 @@ class Menu(Page):
         self.textbox.config(state=tk.DISABLED)
         ###############################
 
+        # Maybe in the future add a select more option to simply add to the list + an option to remove certain files?
         ###############################
         #   File Select Button
         self.selectButton = tk.Button(self, text="Select Files", width=15, command=lambda: self.openFiles())
@@ -60,7 +64,8 @@ class Menu(Page):
         self.textbox.delete("1.0", tk.END)
         self.textbox.insert(tk.END, '\n'.join(self.selectedFiles))
         self.textbox.config(state=tk.DISABLED)
-        self.master.children["!application"].setContent(self.SELECTED, self.selectedFiles)
+        if self.selectedFiles is not None:
+            self.master.children["!application"].setContent(self.SELECTED, self.selectedFiles)
 
     def langSelectEvent(self, event, argu):
         self.LANG = argu.get()
@@ -70,6 +75,18 @@ class Menu(Page):
 class DocumenterPage(Page):
     def __init__(self, w, h):
         Page.__init__(self)
+
+        ##########################
+        #   Initialize Documentor
+        # set this later
+        self.doc
+        ##########################
+
+        ##########################
+        #   Initialize variables
+        self.curfunccounter = 0
+        self.comments = []
+        ##########################
 
         ##########################
         #   Show the current File
@@ -118,21 +135,40 @@ class DocumenterPage(Page):
         #label = tk.Label(self, text="Page 2")
         #label.place(x=(w/2), y=25, anchor="center")
 
+    def postInit(self): # actually init documentor here
+        self.doc = dc.Documenter(self.LANG, self.FILES)
+
     def but_nextFunc(self):
-        if True:    # if no more functions in file to document
+        somevar = 1
+        if somevar:    # if no more functions in file to document
             t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
-            if t_choice:    # if yes to add documentation
-                pass    # send list OF lists of comments to documentor
-            else:   # else just grab
-
+            if t_choice:    # if yes: add documentation
+                doc.
+            else:   # else just do nothing, lets the user go back and change their info
+                pass
         else:       # else just do logic to move onto next function
+            if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
+                self.comments[self.curfunccounter] = self.commentbox.get()
+            else:  # else: append current comment and increment counter
+                self.comments.append(self.commentbox.get())
+                self.curfunccounter += 1
 
+        # now show the next function
 
         print("next func")
 
     def but_noDoc(self):
+        self.commentbox.edit_reset()    # make the comment box empty
+        self.but_nextFunc() # just call nextFunc logic, it is the same when the comment box is entirely empty
         print("no documentation!")
-        print(self.FILES)
 
     def but_prevFunc(self):
+        if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
+            self.comments[self.curfunccounter] = self.commentbox.get()
+        else:  # else: append current comment and increment counter
+            self.comments.append(self.commentbox.get())
+            self.curfunccounter -= 1
+
+        # now show the previous function
+
         print("prev func")
