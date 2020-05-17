@@ -6,6 +6,8 @@ import Documenter as dc
 # Add self.approot variable so all child pages have direct access to the app root
 class Page(tk.Frame):
     def __init__(self):
+        self.LANG = None
+        self.FILES = None
         tk.Frame.__init__(self)
 
     def show(self, event=None):
@@ -137,6 +139,7 @@ class DocumenterPage(Page):
 
     def postInit(self): # actually init documentor here
         self.doc = dc.Documenter(self.LANG, self.FILES)
+        # initial page content put in here
 
     # need to add keys to the self.comments so I can pass that to comment
     def but_nextFunc(self):
