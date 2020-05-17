@@ -45,13 +45,14 @@ class Application(tk.Frame):
         self.selectedFiles = files
         print(self.SELECTED)
         print(self.selectedFiles)
-        # self.pages[1].setLang(lang)
-        # self.pages[1].setFiles(files)
+        self.pages[1].setLang(lang)
+        self.pages[1].setFiles(files)
 
     def beginDocumenting(self):
         if self.SELECTED is None or self.selectedFiles is None:
             messagebox.showinfo("Error", "Please Select a Language and Files")
         else:
+            self.pages[1].postInit()  # init documentor object here
             self.pages[1].show()
 
 
