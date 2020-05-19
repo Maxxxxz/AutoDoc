@@ -68,8 +68,8 @@ class Documenter():
 		return self.content
 
 	def getLines(self) -> dict:
-		fileContent = getFileContent()
-		lines = findFuncDec(fileContent)
+		fileContent = self.getFileContent()
+		lines = self.findFuncDec(fileContent)
 
 		linesDict = dict()
 		for line in lines:
@@ -82,14 +82,14 @@ class Documenter():
 
 	# What exactly was this doing again?
 	def addComment(self, comment, index) -> None:
-		comChar = getCommentFormat(self.LANG)
+		comChar = self.getCommentFormat(self.LANG)
 		comContent = []
 		comChar = comChar[0]
 
 		for line in comment:
 			comContent.append(comChar + line)
 
-		newContent = comment(getFileContent(), comContent, index)
+		newContent = comment(self.getFileContent(), comContent, index)
 		f = open(self.CURFILE, 'w')
 
 		newContent = "\n".join(newContent)
