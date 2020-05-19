@@ -158,33 +158,36 @@ class DocumenterPage(Page):
                 self.comments[self.curfunccounter] = self.commentbox.get('1.0', tk.END)
             else:  # else: append current comment and increment counter
                 self.comments.append((self.commentbox.get('1.0', tk.END)).split('\n'))
-                self.curfunccounter += 1
+
+            self.curfunccounter += 1
 
         # now show the next function
         self.updateBoxes()
 
-        print("next func")
+        # print("next func")
 
     def but_noDoc(self):
         self.commentbox.edit_reset()    # make the comment box empty
         self.but_nextFunc() # just call nextFunc logic, it is the same when the comment box is entirely empty
-        print("no documentation!")
+        # print("no documentation!")
 
     def but_prevFunc(self):
         if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
             self.comments[self.curfunccounter] = self.commentbox.get('1.0', tk.END)
-        else:  # else: append current comment and increment counter
+        else:  # else: append current comment and decrement counter
             self.comments.append(self.commentbox.get('1.0', tk.END))
-            self.curfunccounter -= 1
+
+        self.curfunccounter -= 1
 
         # now show the previous function
 
         self.updateBoxes()
 
-        print("prev func")
+        # print("prev func")
 
     def updateBoxes(self):
         self.functionbox.config(state=tk.NORMAL)
         self.functionbox.delete('1.0', tk.END)
         self.functionbox.insert('1.0', "test" + str(self.curfunccounter))
         self.functionbox.config(state=tk.DISABLED)
+        # print("current count: " + str(self.curfunccounter))
