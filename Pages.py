@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
 import Documenter as dc
+from typing import List
 
 # Add self.approot variable so all child pages have direct access to the app root
 class Page(tk.Frame):
@@ -63,7 +64,7 @@ class Menu(Page):
     def openFiles(self):
         self.selectedFiles = filedialog.askopenfilenames(title="Select files")
         self.textbox.config(state=tk.NORMAL)
-        self.textbox.delete("1.0", tk.END)
+        self.textbox.delete('1.0', tk.END)  # strange behaviour when not using '1.0'
         self.textbox.insert(tk.END, '\n'.join(self.selectedFiles))
         self.textbox.config(state=tk.DISABLED)
         if self.selectedFiles is not None:
@@ -87,7 +88,8 @@ class DocumenterPage(Page):
         ##########################
         #   Initialize variables
         self.curfunccounter = 0
-        self.comments = []
+        self.linesDict: dict
+        self.comments: List = []
         ##########################
 
         ##########################
@@ -140,10 +142,11 @@ class DocumenterPage(Page):
     def postInit(self): # actually init documentor here
         self.doc = dc.Documenter(self.LANG, self.FILES)
         # initial page content put in here
+        # self.linesDict = self.doc.getLines()
 
     # need to add keys to the self.comments so I can pass that to comment
     def but_nextFunc(self):
-        somevar = 1
+        somevar = False
         if somevar:    # if no more functions in file to document
             t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
             if t_choice:    # if yes: add documentation
@@ -152,12 +155,13 @@ class DocumenterPage(Page):
                 pass
         else:       # else just do logic to move onto next function
             if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-                self.comments[self.curfunccounter] = self.commentbox.get(0, tk.END)
+                self.comments[self.curfunccounter] = self.commentbox.get('1.0', tk.END)
             else:  # else: append current comment and increment counter
-                self.comments.append((self.commentbox.get(0, tk.END)).split('\n'))
+                self.comments.append((self.commentbox.get('1.0', tk.END)).split('\n'))
                 self.curfunccounter += 1
 
         # now show the next function
+        self.updateBoxes()
 
         print("next func")
 
@@ -168,11 +172,19 @@ class DocumenterPage(Page):
 
     def but_prevFunc(self):
         if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-            self.comments[self.curfunccounter] = self.commentbox.get(0, tk.END)
+            self.comments[self.curfunccounter] = self.commentbox.get('1.0', tk.END)
         else:  # else: append current comment and increment counter
-            self.comments.append(self.commentbox.get(0, tk.END))
+            self.comments.append(self.commentbox.get('1.0', tk.END))
             self.curfunccounter -= 1
 
         # now show the previous function
 
+        self.updateBoxes()
+
         print("prev func")
+
+    def updateBoxes(self):
+        self.functionbox.config(state=tk.NORMAL)
+        self.functionbox.delete('1.0', tk.END)
+        self.functionbox.insert('1.0', "test" + str(self.curfunccounter))
+        self.functionbox.config(state=tk.DISABLED)
