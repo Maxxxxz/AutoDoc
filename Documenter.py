@@ -13,12 +13,19 @@ class Documenter():
 		self.CURFILE = files[0]
 		self.langFuncRegex = None
 		self.content = None
+		self.langCommTemplate = None
+
+		self.getRegex()
+		self.getCommentFormat()
+
+
 
 	def findFuncDec(self, fileContent):
 		arrInds = []	#empty list
 
 		curLine = 0
 		for line in fileContent:
+			# print(self.langFuncRegex)
 			ind = re.search(self.langFuncRegex, line)
 			if ind is not None:
 				arrInds.append(curLine)
@@ -50,7 +57,7 @@ class Documenter():
 
 		regex = data[self.LANG]
 
-		return regex
+		self.langFuncRegex = regex
 
 	def getCommentFormat(self):
 		with open('languageComments.json', encoding='utf-8') as comInfo:
@@ -58,7 +65,7 @@ class Documenter():
 
 		comments = data[self.LANG]
 
-		return comments
+		self.langCommTemplate = comments
 
 	def getFileContent(self) -> List[str]:
 		self.content = None
@@ -73,7 +80,7 @@ class Documenter():
 
 		linesDict = dict()
 		for line in lines:
-			# print("Function Declared at line:", line)
+			print("Function Declared at line:", line)
 			linesDict[line] = fileContent[line]
 
 		# for key in linesDict:
@@ -81,21 +88,29 @@ class Documenter():
 		return linesDict
 
 	# What exactly was this doing again?
-	def addComment(self, comment, index) -> None:
-		comChar = self.getCommentFormat(self.LANG)
+	# update to use dict of lists of strings :)
+	def addComment(self, commentsDict) -> None:
+		comChar = self.getCommentFormat()
 		comContent = []
 		comChar = comChar[0]
+
+		# get list of comments (already in order from top of file to bottom)
+		# -> create dict where key=linenumber val=listitem
+		# -> reverse list -> create filecontent string with comments
+		# maybe try using generators in the future? https://youtu.be/6QyJVF4buE0
+
+
 
 		for line in comment:
 			comContent.append(comChar + line)
 
-		newContent = comment(self.getFileContent(), comContent, index)
-		f = open(self.CURFILE, 'w')
+		newContent = comment(comContent, index)
+		# f = open(self.CURFILE, 'w')
 
 		newContent = "\n".join(newContent)
 		if newContent != "machine broke error":
-			f.write(newContent)
-
+			print(newContent)
+			# f.write(newContent)
 
 
 if __name__ == "__main__":
