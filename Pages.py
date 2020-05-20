@@ -87,8 +87,9 @@ class DocumenterPage(Page):
 
         ##########################
         #   Initialize variables
-        self.curfunccounter = 0
-        self.linesDict: dict
+        self.curfunccounter = -1
+        self.linesDict: dict = {}
+        self.keys: List = []
         self.comments: List = []
         ##########################
 
@@ -142,7 +143,15 @@ class DocumenterPage(Page):
     def postInit(self): # actually init documentor here
         self.doc = dc.Documenter(self.LANG, self.FILES)
         # initial page content put in here
-        # self.linesDict = self.doc.getLines()
+
+        # getLines does not find lines for some reason
+        self.linesDict = self.doc.getLines()
+        self.keys = list(self.linesDict.keys())
+        self.keys.sort()
+
+        self.curfunccounter = 0
+
+
 
     # need to add keys to the self.comments so I can pass that to comment
     def but_nextFunc(self):
@@ -150,14 +159,15 @@ class DocumenterPage(Page):
         if somevar:    # if no more functions in file to document
             t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
             if t_choice:    # if yes: add documentation
-                self.doc.comment(self.comments)
+                self.doc.addComment(self.comments)
             else:   # else just do nothing, lets the user go back and change their info
                 pass
         else:       # else just do logic to move onto next function
-            if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-                self.comments[self.curfunccounter] = self.commentbox.get('1.0', tk.END)
-            else:  # else: append current comment and increment counter
-                self.comments.append((self.commentbox.get('1.0', tk.END)).split('\n'))
+            self.commentLogic()
+            # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
+            #     self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
+            # else:  # else: append current comment and increment counter
+            #     self.comments.append((self.commentbox.get('1.0', tk.END)))
 
             self.curfunccounter += 1
 
@@ -172,10 +182,11 @@ class DocumenterPage(Page):
         # print("no documentation!")
 
     def but_prevFunc(self):
-        if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-            self.comments[self.curfunccounter] = self.commentbox.get('1.0', tk.END)
-        else:  # else: append current comment and decrement counter
-            self.comments.append(self.commentbox.get('1.0', tk.END))
+        self.commentLogic()
+        # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
+        #     self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
+        # else:  # else: append current comment and decrement counter
+        #     self.comments.append(self.commentbox.get('1.0', tk.END))
 
         self.curfunccounter -= 1
 
@@ -185,9 +196,40 @@ class DocumenterPage(Page):
 
         # print("prev func")
 
+    def commentLogic(self):
+
+        print(self.curfunccounter)
+        print(self.keys)
+        print(self.comments)
+
+        # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
+        self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
+        # else:  # else: append current comment and increment counter
+        #     self.comments.append((self.commentbox.get('1.0', tk.END)))
+
     def updateBoxes(self):
+
+        ##########################
+        # file box
+        self.curFileBox.config(state=tk.NORMAL)
+        self.curFileBox.edit_reset()
+        self.curFileBox.insert('1.0', "file.ext")  # "test" + str(self.curfunccounter))
+        self.curFileBox.config(state=tk.DISABLED)
+        ##########################
+
+        funcstr = self.linesDict[self.keys[self.curfunccounter]]
+
+        ##########################
+        # function box
         self.functionbox.config(state=tk.NORMAL)
-        self.functionbox.delete('1.0', tk.END)
-        self.functionbox.insert('1.0', "test" + str(self.curfunccounter))
+        self.functionbox.edit_reset()
+        self.functionbox.insert('1.0', funcstr)    #"test" + str(self.curfunccounter))
         self.functionbox.config(state=tk.DISABLED)
+        ##########################
         # print("current count: " + str(self.curfunccounter))
+
+        ##########################
+        # comment box
+        self.commentbox.edit_reset()
+        self.commentbox.insert('1.0', self.doc.langCommTemplate)
+        ##########################
