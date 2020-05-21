@@ -72,16 +72,16 @@ class Documenter():
 		with open(self.CURFILE) as f:
 			self.content = f.readlines()
 		self.content = [tmp.strip('\n') for tmp in self.content]
-		return self.content
+		print(self.content)
 
 	def getLines(self) -> dict:
-		fileContent = self.getFileContent()
-		lines = self.findFuncDec(fileContent)
+		self.getFileContent()
+		lines = self.findFuncDec(self.content)
 
 		linesDict = dict()
 		for line in lines:
 			print("Function Declared at line:", line)
-			linesDict[line] = fileContent[line]
+			linesDict[line] = self.content[line]
 
 		# for key in linesDict:
 		# print(key, linesDict[key])
