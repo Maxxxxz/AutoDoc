@@ -26,10 +26,9 @@ class Menu(Page):
         Page.__init__(self)
         #label = tk.Label(self, text="Python Template Window")
         #label.place(x=(w/2), y=25, anchor="center")  # Place label at top of screen
-        self.SELECTED = None    #init SELECTED var
         self.selectedFiles = None
         ###############################
-        #   Language Selection Combobox
+        #   Language Selection Combobox -> change to grab from json
         self.cb = ttk.Combobox(self, textvariable=tk.StringVar(),
                        values=["Python", "C++", "C", "Ruby", "C#", "Go", "Java", "Javascript"
                            , "PHP", "Kotlin", "Scala", "Haskell", "Lua", "Rust", "Perl"],
@@ -68,11 +67,11 @@ class Menu(Page):
         self.textbox.insert(tk.END, '\n'.join(self.selectedFiles))
         self.textbox.config(state=tk.DISABLED)
         if self.selectedFiles is not None:
-            self.master.children["!application"].setContent(self.SELECTED, self.selectedFiles)
+            self.master.children["!application"].setContent(self.LANG, self.selectedFiles)
 
     def langSelectEvent(self, event, argu):
         self.LANG = argu.get()
-        self.master.children["!application"].setContent(argu.get(), self.selectedFiles)
+        self.master.children["!application"].setContent(self.LANG, self.selectedFiles)
 
 #   Documentor pages
 class DocumenterPage(Page):
