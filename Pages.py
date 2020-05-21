@@ -90,7 +90,7 @@ class DocumenterPage(Page):
         self.curfunccounter = -1
         self.linesDict: dict = {}
         self.keys: List = []
-        self.comments: List = []
+        self.comments: dict = {}
         ##########################
 
         ##########################
@@ -146,30 +146,33 @@ class DocumenterPage(Page):
 
         # getLines does not find lines for some reason
         self.linesDict = self.doc.getLines()
+        print(self.linesDict)
         self.keys = list(self.linesDict.keys())
         self.keys.sort()
 
         self.curfunccounter = 0
+        self.updateBoxes()
 
 
 
     # need to add keys to the self.comments so I can pass that to comment
     def but_nextFunc(self):
-        somevar = False
-        if somevar:    # if no more functions in file to document
+        self.commentLogic()
+        if len(self.linesDict) <= len(self.comments) and self.curfunccounter == len(self.linesDict) - 1:    # if no more functions in file to document
             t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
             if t_choice:    # if yes: add documentation
                 self.doc.addComment(self.comments)
+                self.nextFileLogic()
             else:   # else just do nothing, lets the user go back and change their info
                 pass
         else:       # else just do logic to move onto next function
-            self.commentLogic()
+            # self.commentLogic()
+            self.curfunccounter += 1
+
             # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
             #     self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
             # else:  # else: append current comment and increment counter
             #     self.comments.append((self.commentbox.get('1.0', tk.END)))
-
-            self.curfunccounter += 1
 
         # now show the next function
         self.updateBoxes()
@@ -177,18 +180,21 @@ class DocumenterPage(Page):
         # print("next func")
 
     def but_noDoc(self):
-        self.commentbox.edit_reset()    # make the comment box empty
+        self.commentbox.delete('1.0', tk.END)    # make the comment box empty
         self.but_nextFunc() # just call nextFunc logic, it is the same when the comment box is entirely empty
         # print("no documentation!")
 
     def but_prevFunc(self):
         self.commentLogic()
         # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-        #     self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
+        #     self.comments[self.keys[self.curfunccounter]] = self.commentbox.get(1.0, tk.END)
         # else:  # else: append current comment and decrement counter
-        #     self.comments.append(self.commentbox.get('1.0', tk.END))
+        #     self.comments.append(self.commentbox.get(1.0, tk.END))
 
-        self.curfunccounter -= 1
+        if self.curfunccounter >= 1:
+            self.curfunccounter -= 1
+        else:
+            messagebox.showinfo("Unable to move to previous function", "You can not move to the previous function, as there is none.")
 
         # now show the previous function
 
@@ -196,40 +202,55 @@ class DocumenterPage(Page):
 
         # print("prev func")
 
+    def nextFileLogic(self):
+        self.curfunccounter = 0
+
     def commentLogic(self):
 
-        print(self.curfunccounter)
-        print(self.keys)
-        print(self.comments)
+        # print(self.curfunccounter)
+        # print(self.keys)
+        # print(self.comments)
 
         # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-        self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
+        self.comments[self.keys[self.curfunccounter]] = self.commentbox.get(1.0, tk.END)
         # else:  # else: append current comment and increment counter
-        #     self.comments.append((self.commentbox.get('1.0', tk.END)))
+        #     self.comments.append((self.commentbox.get(1.0, tk.END)))
+
+    def removeNewlines(self):
+        # https://stackoverflow.com/a/48223941
+        if self.commentbox.get('end-1c', tk.END) == '\n':
+            self.commentbox.delete('end-1c', tk.END)
 
     def updateBoxes(self):
 
         ##########################
         # file box
         self.curFileBox.config(state=tk.NORMAL)
-        self.curFileBox.edit_reset()
-        self.curFileBox.insert('1.0', "file.ext")  # "test" + str(self.curfunccounter))
+        self.curFileBox.delete(1.0, tk.END)
+        self.curFileBox.insert(1.0, "file.ext")  # "test" + str(self.curfunccounter))
         self.curFileBox.config(state=tk.DISABLED)
         ##########################
 
         funcstr = self.linesDict[self.keys[self.curfunccounter]]
-
+        # print("funcstr is: " + funcstr)
         ##########################
         # function box
         self.functionbox.config(state=tk.NORMAL)
-        self.functionbox.edit_reset()
-        self.functionbox.insert('1.0', funcstr)    #"test" + str(self.curfunccounter))
+        self.functionbox.delete(1.0, tk.END)
+        self.functionbox.insert(1.0, funcstr)    #"test" + str(self.curfunccounter))
         self.functionbox.config(state=tk.DISABLED)
         ##########################
         # print("current count: " + str(self.curfunccounter))
 
         ##########################
         # comment box
-        self.commentbox.edit_reset()
-        self.commentbox.insert('1.0', self.doc.langCommTemplate)
+        self.commentbox.delete(1.0, tk.END)
+        if self.keys[self.curfunccounter] in self.comments:
+            self.commentbox.insert(1.0, self.comments[self.keys[self.curfunccounter]])
+            # print(self.comments[self.keys[self.curfunccounter]])
+        else:
+            self.commentbox.insert(1.0, self.doc.langCommTemplate)
+        # finally, call to remove newlines at end generated by insert
+        self.removeNewlines()
         ##########################
+
