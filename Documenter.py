@@ -1,6 +1,7 @@
 #   Written By: Michael Cooper
 
 from typing import List
+from os import rename
 
 import re
 import json
@@ -90,27 +91,29 @@ class Documenter():
 	# What exactly was this doing again?
 	# update to use dict of lists of strings :)
 	def addComment(self, commentsDict) -> None:
-		comChar = self.getCommentFormat()
+		self.getCommentFormat()
 		comContent = []
-		comChar = comChar[0]
+		comChar = self.langCommTemplate[0]
 
 		# get list of comments (already in order from top of file to bottom)
 		# -> create dict where key=linenumber val=listitem
 		# -> reverse list -> create filecontent string with comments
 		# maybe try using generators in the future? https://youtu.be/6QyJVF4buE0
 
-
+		
 
 		for line in comment:
 			comContent.append(comChar + line)
 
 		newContent = comment(comContent, index)
-		# f = open(self.CURFILE, 'w')
+
+		rename(self.CURFILE, self.CURFILE + ".bak")
+		f = open(self.CURFILE, 'w')
 
 		newContent = "\n".join(newContent)
 		if newContent != "machine broke error":
 			print(newContent)
-			# f.write(newContent)
+			f.write(newContent)
 
 
 if __name__ == "__main__":
