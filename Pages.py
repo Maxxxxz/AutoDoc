@@ -90,6 +90,7 @@ class DocumenterPage(Page):
         self.linesDict: dict = {}
         self.keys: List = []
         self.comments: dict = {}
+        self.localname = None
         ##########################
 
         ##########################
@@ -115,7 +116,7 @@ class DocumenterPage(Page):
         self.commentbox = tk.Text(self)
         self.commentbox.config(width=50, height=25)
         self.commentbox.place(x=(w/2), y=(h/2), anchor="center")
-        self.commentbox.insert(tk.END, "test!")
+        self.commentbox.insert(tk.END, "function description")
         ##########################
 
         ##########################
@@ -143,8 +144,10 @@ class DocumenterPage(Page):
         self.doc = dc.Documenter(self.LANG, self.FILES)
         # initial page content put in here
 
-        # getLines does not find lines for some reason
+        # add logic to check if lines dict has any content in it
+
         self.linesDict = self.doc.getLines()
+        
         print(self.linesDict)
         self.keys = list(self.linesDict.keys())
         self.keys.sort()
@@ -203,6 +206,12 @@ class DocumenterPage(Page):
 
     def nextFileLogic(self):
         self.curfunccounter = 0
+        self.doc.nextFile()
+        if self.doc.CURFILE == "NO MORE FILES":
+            messagebox.showinfo("No More Files", "There are no more files to document in your given list.\nThe program will now return to the menu.")
+            self.returnToMenu()
+        else:
+            self.linesDict = self.doc.getLines()
 
     def commentLogic(self):
 
@@ -220,16 +229,23 @@ class DocumenterPage(Page):
         if self.commentbox.get('end-1c', tk.END) == '\n':
             self.commentbox.delete('end-1c', tk.END)
 
+    def getLocalName(self):
+        self.localname = self.doc.CURFILE.split('/')
+        return "Current File: " + self.localname[len(self.localname) - 1]
+
     def updateBoxes(self):
 
         ##########################
         # file box
         self.curFileBox.config(state=tk.NORMAL)
         self.curFileBox.delete(1.0, tk.END)
-        self.curFileBox.insert(1.0, "file.ext")  # "test" + str(self.curfunccounter))
+        curfile = self.getLocalName()
+        self.curFileBox.insert(1.0, curfile)
         self.curFileBox.config(state=tk.DISABLED)
         ##########################
-
+        # print(len(self.linesDict))
+        # print(len(self.keys))
+        # print(self.curfunccounter)
         funcstr = self.linesDict[self.keys[self.curfunccounter]]
         # print("funcstr is: " + funcstr)
         ##########################
