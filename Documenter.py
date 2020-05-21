@@ -12,6 +12,7 @@ class Documenter():
 		self.LANG = language
 		self.FILES = files
 		self.CURFILE = files[0]
+		self.curFileCounter = 0
 		self.langFuncRegex = None
 		self.content = None
 		self.langCommTemplate = None
@@ -19,7 +20,13 @@ class Documenter():
 		self.getRegex()
 		self.getCommentFormat()
 
-
+	def nextFile(self):
+		self.curFileCounter += 1
+		if self.curFileCounter < len(self.FILES):
+			self.CURFILE = self.FILES[self.curFileCounter]
+			self.content
+		else:
+			self.CURFILE = "NO MORE FILES"
 
 	def findFuncDec(self, fileContent):
 		arrInds = []	#empty list
@@ -100,7 +107,7 @@ class Documenter():
 		# -> reverse list -> create filecontent string with comments
 		# maybe try using generators in the future? https://youtu.be/6QyJVF4buE0
 
-		
+
 
 		for line in comment:
 			comContent.append(comChar + line)
