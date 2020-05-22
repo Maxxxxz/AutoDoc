@@ -9,6 +9,7 @@ class Page(tk.Frame):
     def __init__(self):
         self.LANG = None
         self.FILES = None
+        self.NAME = "AutoDoc"
         tk.Frame.__init__(self)
 
     def show(self, event=None):
@@ -27,6 +28,8 @@ class Menu(Page):
         #label = tk.Label(self, text="Python Template Window")
         #label.place(x=(w/2), y=25, anchor="center")  # Place label at top of screen
         self.selectedFiles = None
+        self.w = w
+        self.h = h
         ###############################
         #   Language Selection Combobox -> change to grab from json
         self.cb = ttk.Combobox(self, textvariable=tk.StringVar(),
@@ -60,6 +63,15 @@ class Menu(Page):
         self.docButton.place(x=(w/2), y=((h/2) + (h/2.15)), anchor="center")
         ###############################
 
+    def restart(self):
+        # re-init
+        self.cb.set("Select Language")
+        self.selectedFiles = None
+        self.textbox.config(state=tk.NORMAL)
+        self.textbox.delete('1.0', tk.END)
+        self.textbox.config(state=tk.DISABLED)
+        # self.destroy()
+
     def openFiles(self):
         self.selectedFiles = filedialog.askopenfilenames(title="Select files")
         self.textbox.config(state=tk.NORMAL)
@@ -91,6 +103,8 @@ class DocumenterPage(Page):
         self.keys: List = []
         self.comments: dict = {}
         self.localname = None
+        self.w = w
+        self.h = h
         ##########################
 
         ##########################
@@ -147,15 +161,32 @@ class DocumenterPage(Page):
         # add logic to check if lines dict has any content in it
 
         self.linesDict = self.doc.getLines()
-        
+
         print(self.linesDict)
+        self.updateKeys()
+        if self.checkValidLines():
+            self.curfunccounter = 0
+            self.updateBoxes()
+            self.show()
+        else:
+            self.nextFileLogic()
+
+
+    def restart(self):
+        # re-init
+        self.doc = None
+        self.curfunccounter = -1
+        self.linesDict: dict = {}
+        self.keys: List = []
+        self.comments: dict = {}
+        self.localname = None
+
+        # del self.doc
+        # self.destroy()
+
+    def updateKeys(self):
         self.keys = list(self.linesDict.keys())
         self.keys.sort()
-
-        self.curfunccounter = 0
-        self.updateBoxes()
-
-
 
     # need to add keys to the self.comments so I can pass that to comment
     def but_nextFunc(self):
@@ -163,6 +194,7 @@ class DocumenterPage(Page):
         if len(self.linesDict) <= len(self.comments) and self.curfunccounter == len(self.linesDict) - 1:    # if no more functions in file to document
             t_choice = messagebox.askyesno("Confirm Documentation of File", "Are you sure you want to add documentation to this file?")
             if t_choice:    # if yes: add documentation
+                # print(self.comments)
                 self.doc.addComment(self.comments)
                 self.nextFileLogic()
             else:   # else just do nothing, lets the user go back and change their info
@@ -170,14 +202,13 @@ class DocumenterPage(Page):
         else:       # else just do logic to move onto next function
             # self.commentLogic()
             self.curfunccounter += 1
+            # now show the next function
+            self.updateBoxes()
 
             # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
             #     self.comments[self.keys[self.curfunccounter]] = self.commentbox.get('1.0', tk.END)
             # else:  # else: append current comment and increment counter
             #     self.comments.append((self.commentbox.get('1.0', tk.END)))
-
-        # now show the next function
-        self.updateBoxes()
 
         # print("next func")
 
@@ -212,6 +243,15 @@ class DocumenterPage(Page):
             self.returnToMenu()
         else:
             self.linesDict = self.doc.getLines()
+            if self.checkValidLines():
+                self.updateKeys()
+            else:
+                self.nextFileLogic()
+            self.updateBoxes()
+
+    def returnToMenu(self):
+        self.master.children["!application"].restart()
+        self.restart()
 
     def commentLogic(self):
 
@@ -220,9 +260,20 @@ class DocumenterPage(Page):
         # print(self.comments)
 
         # if len(self.comments) >= (self.curfunccounter + 1):  # if index already exists (index + 1) override current comment at index
-        self.comments[self.keys[self.curfunccounter]] = self.commentbox.get(1.0, tk.END)
+        toadd = self.commentbox.get(1.0, 'end-1c') # end-1c to not grab the newline at the end
+        self.comments[self.keys[self.curfunccounter]] = toadd.split('\n') # split by lines
         # else:  # else: append current comment and increment counter
         #     self.comments.append((self.commentbox.get(1.0, tk.END)))
+
+    def checkValidLines(self) -> bool:
+        if len(self.linesDict) < 1:
+            messagebox.showerror("No Functions Found",
+            "There were no functions found in " + self.doc.CURFILE +
+            ".\nThis could be due to a failed regex, or the file simply does not have functions declared in it." +
+            "\n" + self.NAME + " will now move on to the next file.")
+            return False
+        else:
+            return True
 
     def removeNewlines(self):
         # https://stackoverflow.com/a/48223941
@@ -244,9 +295,10 @@ class DocumenterPage(Page):
         self.curFileBox.config(state=tk.DISABLED)
         ##########################
         # print(len(self.linesDict))
-        # print(len(self.keys))
-        # print(self.curfunccounter)
-        funcstr = self.linesDict[self.keys[self.curfunccounter]]
+        print(len(self.keys))
+        print(self.curfunccounter)
+        t = self.keys[self.curfunccounter]
+        funcstr = self.linesDict[t]
         # print("funcstr is: " + funcstr)
         ##########################
         # function box
