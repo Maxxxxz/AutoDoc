@@ -24,9 +24,10 @@ class Documenter():
 		self.curFileCounter += 1
 		if self.curFileCounter < len(self.FILES):
 			self.CURFILE = self.FILES[self.curFileCounter]
-			self.content
+			# self.getFileContent() # getfilecontent is called on getlines, which is always called from documentor page
 		else:
 			self.CURFILE = "NO MORE FILES"
+		print(self.CURFILE)
 
 	def findFuncDec(self, fileContent):
 		arrInds = []	#empty list
@@ -43,7 +44,7 @@ class Documenter():
 
 	# update to use dict of lists of strings :)
 	def comment(self, commentsDict):	# comment will be array of lines to comment
-		keys = commentsDict.keys()		# logic to get keys in correct order we need them in
+		keys = list(commentsDict.keys())		# logic to get keys in correct order we need them in
 		keys.sort()
 		keys.reverse()
 		# keys are now in reverse order to document from bottom down, keeping other keys simple with no extra math
@@ -55,7 +56,7 @@ class Documenter():
 		# comment.reverse()			# reverse comment to place comment in proper order
 		# for line in comment:
 		# 	fileContent.insert(index, line)
-		return fileContent		# return new version of filecontent
+		# return fileContent		# return new version of filecontent
 
 	def getRegex(self):
 		with open('languageRegexes.json', encoding='utf-8') as langInfo:
@@ -75,7 +76,7 @@ class Documenter():
 
 		self.langCommTemplate = comments
 
-	def getFileContent(self) -> List[str]:
+	def getFileContent(self):
 		self.content = None
 		with open(self.CURFILE) as f:
 			self.content = f.readlines()
@@ -107,20 +108,25 @@ class Documenter():
 		# -> reverse list -> create filecontent string with comments
 		# maybe try using generators in the future? https://youtu.be/6QyJVF4buE0
 
+		# keys = commentsDict.keys()
+		#
+		# keys.sort()
+		# keys.reverse()
 
+		# for key in keys:
+		# 	for line in comment[key]:
+		# 		comContent.append(comChar + line)
 
-		for line in comment:
-			comContent.append(comChar + line)
+		self.comment(commentsDict)
 
-		newContent = comment(comContent, index)
-
-		rename(self.CURFILE, self.CURFILE + ".bak")
+		# find SAFE way to rename with numbers if the file already exists.
+		rename(self.CURFILE, self.CURFILE + ".ADbak") # autodoc bak
 		f = open(self.CURFILE, 'w')
 
-		newContent = "\n".join(newContent)
-		if newContent != "machine broke error":
-			print(newContent)
-			f.write(newContent)
+		self.content = "\n".join(self.content)
+		if self.content != "machine broke error":
+			print(self.content)
+			f.write(self.content)
 
 
 if __name__ == "__main__":
