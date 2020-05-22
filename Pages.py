@@ -243,6 +243,7 @@ class DocumenterPage(Page):
             self.returnToMenu()
         else:
             self.linesDict = self.doc.getLines()
+            self.comments = {}
             if self.checkValidLines():
                 self.updateKeys()
             else:
