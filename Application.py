@@ -18,27 +18,34 @@ class Application(tk.Frame):
         master.geometry("{}x{}".format(WIDTH, HEIGHT))
         master.resizable(width=False, height=False)
 
-        self.contentFrame = tk.Frame(master, width=100, height=100)
-        self.contentFrame.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
-
         self.pages = [] #init pages list
 
-        self.addContent()
+        self.contentFrame = None
 
-        for page in self.pages:
-            page.place(in_=self.contentFrame, x=0, y=0, relwidth=1, relheight=1)
+        self.addContent()
 
         self.pages[0].show()
 
         self.SELECTED = None
         self.selectedFiles = None
 
-        self.bind_all("<Control-Key-0>", self.pages[0].show)    # main menu
-        self.bind_all("<Control-Key-1>", self.pages[1].show)    # Page 2
-
     def addContent(self, contentFrame=None):
         self.pages.append(Pages.Menu(WIDTH, HEIGHT))
         self.pages.append(Pages.DocumenterPage(WIDTH, HEIGHT))
+
+        self.contentFrame = tk.Frame(self.master, width=100, height=100)
+        self.contentFrame.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
+
+        for page in self.pages:
+            page.place(in_=self.contentFrame, x=0, y=0, relwidth=1, relheight=1)
+
+        # # binds
+        # # unbind if previously bound
+        # self.unbind_all("<Control-Key-0>")
+        # self.unbind_all("<Control-Key-1>")
+        # # now bind the controls
+        # self.bind_all("<Control-Key-0>", self.pages[0].show)  # main menu
+        # self.bind_all("<Control-Key-1>", self.pages[1].show)  # Page 2
 
     def setContent(self, lang, files):
         self.SELECTED = lang
@@ -53,8 +60,12 @@ class Application(tk.Frame):
             messagebox.showinfo("Error", "Please Select a Language and Files")
         else:
             self.pages[1].postInit()  # init documentor object here
-            self.pages[1].show()
 
+    def restart(self):
+        self.SELECTED = None
+        self.selectedFiles = None
+        self.pages[0].restart()
+        self.pages[0].show()
 
 if __name__ == "__main__":
     root = tk.Tk()
