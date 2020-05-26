@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter.ttk import Combobox
 import Pages
 import json
+import sys
 
 WIDTH = 500
 HEIGHT = 500
@@ -13,6 +14,7 @@ HEIGHT = 500
 COMMFILE = "languageComments.json"
 REGEXFILE = "languageRegexes.json"
 TITLE = "Auto Doc"
+VERSION = "0.20.5.25"
 
 #   Application class
 class Application(tk.Frame):
@@ -101,10 +103,33 @@ class Application(tk.Frame):
         self.pages[0].restart()
         self.pages[0].show()
 
+def runCLI():
+    print("CLI!")
+
+def handleArgs():
+    if sys.argv[1] == "-help":
+            print("{} Commands:".format(TITLE))
+            print("-help: Shows this message.")
+            print("-gui: Launches the gui version of {}.".format(TITLE))
+            print("-version: Shows the current version of {}.".format(TITLE))
+            # print("-update: Attempts to update {}.".format(TITLE)) 
+        elif sys.argv[1] == "-gui":
+            root = tk.Tk()
+            app = Application(root)
+            app.pack()
+            root.mainloop()
+        elif sys.argv[1] == "-version":
+            print("{}".format(VERSION))
+        else:
+            print("Unknown argument {}.".format(sys.argv[1]))
+
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = Application(root)
-    app.pack()
-    root.mainloop()
+    if len(sys.argv) == 2:
+        handleArgs()
+    elif len(sys.argv) == 1:
+        print("Running CLI")
+        runCLI()
+    else:
+        print("Too many arguments. Try running with -help.")
 else:
-    pass # CLI start code here!
+    pass
