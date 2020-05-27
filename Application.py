@@ -6,6 +6,7 @@ from tkinter.ttk import Combobox
 import Pages
 import json
 import sys
+import os
 
 WIDTH = 500
 HEIGHT = 500
@@ -104,24 +105,59 @@ class Application(tk.Frame):
         self.pages[0].show()
 
 def runCLI():
-    print("CLI!")
+    # print("You will now be asked for the ")
+    print("Input File Names (relative or absolute). Type 'done' to finish inputting files.")
+    print("Prepend with -r to remove the specified file.")
+    print("Use -list to list currently selected files.")
+    # use input to grab relative or absolute path
+    print(os.getcwd())
+    fin = False
+    files = []
+
+    while not fin:
+        inp = input("Path: ")
+        if inp == "done":
+            fin = True
+        elif inp == "-list":
+            print("Currently Selected Files:")
+            for file in files:
+                print(file)
+        elif inp.startswith("-r"):
+            inp = os.path.realpath(inp[3:])
+            if inp in files:
+                files.remove(inp)
+            else:
+                print("File: {} not in list.".format(inp))
+        else:
+            if os.path.exists(inp):
+                inp = os.path.realpath(inp)
+                if inp in files:
+                    print("File: {} already in list.".format(inp))
+                else:
+                    files.append(inp)
+            else:
+                print("File: {} not found".format(inp))
+        
+    
+
+
 
 def handleArgs():
     if sys.argv[1] == "-help":
-            print("{} Commands:".format(TITLE))
-            print("-help: Shows this message.")
-            print("-gui: Launches the gui version of {}.".format(TITLE))
-            print("-version: Shows the current version of {}.".format(TITLE))
-            # print("-update: Attempts to update {}.".format(TITLE)) 
-        elif sys.argv[1] == "-gui":
-            root = tk.Tk()
-            app = Application(root)
-            app.pack()
-            root.mainloop()
-        elif sys.argv[1] == "-version":
-            print("{}".format(VERSION))
-        else:
-            print("Unknown argument {}.".format(sys.argv[1]))
+        print("{} Commands:".format(TITLE))
+        print("-help: Shows this message.")
+        print("-gui: Launches the gui version of {}.".format(TITLE))
+        print("-version: Shows the current version of {}.".format(TITLE))
+        # print("-update: Attempts to update {}.".format(TITLE)) 
+    elif sys.argv[1] == "-gui":
+        root = tk.Tk()
+        app = Application(root)
+        app.pack()
+        root.mainloop()
+    elif sys.argv[1] == "-version":
+        print("{}".format(VERSION))
+    else:
+        print("Unknown argument {}.".format(sys.argv[1]))
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
