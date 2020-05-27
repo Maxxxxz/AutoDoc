@@ -5,8 +5,6 @@ from os import rename
 
 import re
 
-from tkinter import messagebox
-
 class Documenter():
 
 	def __init__(self, language, files, rx, app):
@@ -49,9 +47,14 @@ class Documenter():
 		keys.reverse()
 		# keys are now in reverse order to document from bottom down, keeping other keys simple with no extra math
 		for k in keys:		# begin looping over all keys (will be from bottom up)
-			commentsDict[k].reverse()
+			cur = commentsDict[k]
+			# Add logic to check if empty comment
+			# if cur.len == 1 and cur[0] == "\n"
+			# 	pass
+			# else:
+			cur.reverse()
 			############## add logic here to see how many whitespace characters are on line below ##############
-			for c in commentsDict[k]:	# should work :)
+			for c in cur:	# should work :)
 				self.content.insert(k, c)		# insert comments in reverse order so they appear correctly
 
 		# comment.reverse()			# reverse comment to place comment in proper order
