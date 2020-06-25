@@ -11,11 +11,13 @@ import os
 WIDTH = 500
 HEIGHT = 500
 
+# Maybe add a 'strip comments' feature
+
 # Load these from JSON in the future with these as defaults?
 COMMFILE = "languageComments.json"
 REGEXFILE = "languageRegexes.json"
 TITLE = "Auto Doc"
-VERSION = "0.20.5.25"
+VERSION = "0.20.6.24"
 
 #   Application class
 class Application(tk.Frame):
