@@ -4,6 +4,7 @@ import pprint
 import tkinter as tk
 from tkinter.ttk import Combobox
 import Pages
+from cli import runCLI
 import json
 import sys
 import os
@@ -17,7 +18,7 @@ HEIGHT = 500
 COMMFILE = "languageComments.json"
 REGEXFILE = "languageRegexes.json"
 TITLE = "Auto Doc"
-VERSION = "0.20.6.24"
+VERSION = "0.20.7.18"
 
 #   Application class
 class Application(tk.Frame):
@@ -106,44 +107,6 @@ class Application(tk.Frame):
         self.pages[0].restart()
         self.pages[0].show()
 
-def runCLI():
-    # print("You will now be asked for the ")
-    print("Input File Names (relative or absolute). Type 'done' to finish inputting files.")
-    print("Prepend with -r to remove the specified file.")
-    print("Use -list to list currently selected files.")
-    # use input to grab relative or absolute path
-    print(os.getcwd())
-    fin = False
-    files = []
-
-    while not fin:
-        inp = input("Path: ")
-        if inp == "done":
-            fin = True
-        elif inp == "-list":
-            print("Currently Selected Files:")
-            for file in files:
-                print(file)
-        elif inp.startswith("-r"):
-            inp = os.path.realpath(inp[3:])
-            if inp in files:
-                files.remove(inp)
-            else:
-                print("File: {} not in list.".format(inp))
-        else:
-            if os.path.exists(inp):
-                inp = os.path.realpath(inp)
-                if inp in files:
-                    print("File: {} already in list.".format(inp))
-                else:
-                    files.append(inp)
-            else:
-                print("File: {} not found".format(inp))
-        
-    
-
-
-
 def handleArgs():
     if sys.argv[1] == "-help":
         print("{} Commands:".format(TITLE))
@@ -165,7 +128,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         handleArgs()
     elif len(sys.argv) == 1:
-        print("Running CLI")
         runCLI()
     else:
         print("Too many arguments. Try running with -help.")
