@@ -26,4 +26,5 @@ I intend on making this tool incredibly customizable so that you can easily take
     * Read json for comment formatting rather than use hardcoded strings
     * ~Remove child windows by using lift/place and Page classes~
 * CLI
-    * Implement it
+    * Create CLI class functions
+    * Determine the best way to request multiline comments from user
