@@ -128,7 +128,8 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         handleArgs()
     elif len(sys.argv) == 1:
-        runCLI()
+        cl = cli.CLI()
+        cl.runCLI()
     else:
         print("Too many arguments. Try running with -help.")
 else:
