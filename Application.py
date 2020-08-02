@@ -4,7 +4,7 @@ import pprint
 import tkinter as tk
 from tkinter.ttk import Combobox
 import Pages
-from cli import runCLI
+import cli
 import json
 import sys
 import os
@@ -18,7 +18,7 @@ HEIGHT = 500
 COMMFILE = "languageComments.json"
 REGEXFILE = "languageRegexes.json"
 TITLE = "Auto Doc"
-VERSION = "0.20.7.18"
+VERSION = "0.20.8.2"
 
 #   Application class
 class Application(tk.Frame):
